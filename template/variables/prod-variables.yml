@@ -1,0 +1,8 @@
+variables:
+  environment: 'prod'
+
+  terraformVersion: 'latest'
+
+  azureServiceConnection: 'AZURE-PROD-SERVICE-CONNECTION'
+
+  terraformWorkingDirectory: 'terraform/environments/prod'

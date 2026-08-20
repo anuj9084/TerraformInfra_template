@@ -10,16 +10,16 @@ parameters:
 - name: environment
   displayName: 'Select Environment'
   type: string
-  default: Dev
+  default: dev
   values:
-    - Dev
-    - Prod
+    - dev
+    - prod
 
 variables:
-- ${{ if eq(parameters.environment, 'Dev') }}:
+- ${{ if eq(parameters.environment, 'dev') }}:
   - template: template/variables/dev-variables.yml
 
-- ${{ if eq(parameters.environment, 'Prod') }}:
+- ${{ if eq(parameters.environment, 'prod') }}:
   - template: template/variables/prod-variables.yml
 
 stages:

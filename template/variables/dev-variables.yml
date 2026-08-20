@@ -1,0 +1,8 @@
+variables:
+  environment: 'dev'
+
+  terraformVersion: 'latest'
+
+  azureServiceConnection: 'AZURE-DEV-SERVICE-CONNECTION'
+
+  terraformWorkingDirectory: 'terraform/environments/dev'

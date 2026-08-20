@@ -1,0 +1,40 @@
+steps:
+
+- checkout: self
+
+- task: TerraformInstaller@1
+  displayName: 'Install Terraform'
+  inputs:
+    terraformVersion: '$(terraformVersion)'
+
+- task: PowerShell@2
+  displayName: 'Terraform Init'
+  inputs:
+    targetType: 'inline'
+    script: |
+      terraform init
+    workingDirectory: '$(terraformWorkingDirectory)'
+
+- task: PowerShell@2
+  displayName: 'Terraform Validate'
+  inputs:
+    targetType: 'inline'
+    script: |
+      terraform validate
+    workingDirectory: '$(terraformWorkingDirectory)'
+
+- task: PowerShell@2
+  displayName: 'Terraform Plan'
+  inputs:
+    targetType: 'inline'
+    script: |
+      terraform plan -var-file="$(terraformVarFile)"
+    workingDirectory: '$(terraformWorkingDirectory)'
+
+- task: PowerShell@2
+  displayName: 'Terraform Apply'
+  inputs:
+    targetType: 'inline'
+    script: |
+      terraform apply -var-file="$(terraformVarFile)" -auto-approve
+    workingDirectory: '$(terraformWorkingDirectory)'
