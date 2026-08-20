@@ -5,4 +5,6 @@ variables:
 
   azureServiceConnection: 'anuj-pipeline-sc'
 
-  terraformWorkingDirectory: 'terraform/environments/dev'
+  terraformWorkingDirectory: 'Dev'
+
+  terraformVarFile: 'dev.tfvars'
