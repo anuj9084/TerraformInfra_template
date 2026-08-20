@@ -1,0 +1,106 @@
+# ==============================================================================
+# Azure DevOps Pipeline for Terraform (Dev & Prod Deployment)
+# Uses Variable Templates & Step Templates
+# ==============================================================================
+
+name: $(Build.DefinitionName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+# Pipeline Triggers
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+# Build Agent Pool (Microsoft-hosted Ubuntu VM)
+pool:
+  vmImage: 'ubuntu-latest'
+
+# ==============================================================================
+# Variable Templates Import
+# ==============================================================================
+variables:
+  - template: pipelines/variables/common-vars.yml
+  - template: pipelines/variables/dev-vars.yml
+  - template: pipelines/variables/prod-vars.yml
+
+stages:
+  # ============================================================================
+  # STAGE 1: CI (Validate & Plan for Dev and Prod)
+  # ============================================================================
+  - stage: Terraform_Plan
+    displayName: '1. Validate & Plan (Dev & Prod)'
+    jobs:
+      - job: Plan_Dev
+        displayName: 'Plan - Dev Environment'
+        steps:
+          - template: pipelines/templates/terraform-steps.yml
+            parameters:
+              serviceConnection: $(azureServiceConnection)
+              workingDirectory: $(terraformWorkingDir)
+              tfvarsFile: $(devTfvarsFile)
+              terraformVersion: $(tfVersion)
+              runApply: false
+
+      - job: Plan_Prod
+        displayName: 'Plan - Prod Environment'
+        steps:
+          - template: pipelines/templates/terraform-steps.yml
+            parameters:
+              serviceConnection: $(azureServiceConnection)
+              workingDirectory: $(terraformWorkingDir)
+              tfvarsFile: $(prodTfvarsFile)
+              terraformVersion: $(tfVersion)
+              runApply: false
+
+  # ============================================================================
+  # STAGE 2: CD - Deploy to Dev Environment
+  # ============================================================================
+  - stage: Terraform_Apply_Dev
+    displayName: '2. Deploy Dev'
+    dependsOn: Terraform_Plan
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: Apply_Dev
+        displayName: 'Apply Dev Changes'
+        environment: $(devEnvironment)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: pipelines/templates/terraform-steps.yml
+                  parameters:
+                    serviceConnection: $(azureServiceConnection)
+                    workingDirectory: $(terraformWorkingDir)
+                    tfvarsFile: $(devTfvarsFile)
+                    terraformVersion: $(tfVersion)
+                    runApply: true
+
+  # ============================================================================
+  # STAGE 3: CD - Deploy to Prod Environment (Dev ke baad chalega)
+  # ============================================================================
+  - stage: Terraform_Apply_Prod
+    displayName: '3. Deploy Prod'
+    dependsOn: Terraform_Apply_Dev
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: Apply_Prod
+        displayName: 'Apply Prod Changes'
+        environment: $(prodEnvironment)
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: pipelines/templates/terraform-steps.yml
+                  parameters:
+                    serviceConnection: $(azureServiceConnection)
+                    workingDirectory: $(terraformWorkingDir)
+                    tfvarsFile: $(prodTfvarsFile)
+                    terraformVersion: $(tfVersion)
+                    runApply: true

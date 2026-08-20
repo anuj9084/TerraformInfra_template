@@ -1,0 +1,13 @@
+# ==============================================================================
+# Dev Environment Variables for Pipeline
+# ==============================================================================
+
+variables:
+  # Environment Name in Azure DevOps (Approvals & Checks ke liye)
+  devEnvironment: 'Dev'
+
+  # Path to dev.tfvars file
+  devTfvarsFile: '$(System.DefaultWorkingDirectory)/Dev/dev.tfvars'
+
+  # Backend state file key (Future remote backend ke liye)
+  # devBackendKey: 'dev.terraform.tfstate'
