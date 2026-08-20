@@ -1,8 +1,3 @@
-# ==============================================================================
-# Azure DevOps Pipeline for Terraform (Dev & Prod Deployment)
-# Uses Variable Templates & Step Templates
-# ==============================================================================
-
 name: $(Build.DefinitionName)_$(Date:yyyyMMdd)$(Rev:.r)
 
 # Pipeline Triggers
@@ -18,7 +13,7 @@ pr:
 
 # Build Agent Pool (Microsoft-hosted Ubuntu VM)
 pool:
-  vmImage: 'ubuntu-latest'
+  name: 'AgentUserDefinedPool'
 
 # ==============================================================================
 # Variable Templates Import
