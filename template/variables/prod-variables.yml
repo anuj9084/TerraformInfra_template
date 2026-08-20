@@ -3,6 +3,6 @@ variables:
 
   terraformVersion: 'latest'
 
-  azureServiceConnection: 'AZURE-PROD-SERVICE-CONNECTION'
+  azureServiceConnection: 'anuj-pipeline-sc'
 
   terraformWorkingDirectory: 'terraform/environments/prod'
