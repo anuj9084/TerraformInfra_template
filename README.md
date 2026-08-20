@@ -4,13 +4,14 @@ Standardized Infrastructure-as-Code (IaC) templates using Terraform to deploy sc
 
 ---
 
-## 🚀 Azure DevOps CI/CD Pipeline Setup (Dev & Prod)
+## 🚀 Azure DevOps CI/CD Pipeline Setup (Windows Self-Hosted Agent Compatible)
 
-Pipeline fully modular bana di gayi hai: **Step Templates**, **Variable Templates**, aur **Multi-Stage Pipeline** ke saath.
+Pipeline fully configured hai **Windows Self-Hosted Agent** ke liye (**PowerShell native execution** aur **Pool configuration** ke saath).
 
 - 🔑 **Service Connection:** `anuj-pipeline-sc`
+- 🖥️ **Agent Pool:** `Default` (Aap [`pipelines/variables/common-vars.yml`](file:///d:/TerraformInfra_template/pipelines/variables/common-vars.yml) me change kar sakte hain)
 - 📄 **Main Pipeline:** [`azure-pipelines.yml`](file:///d:/TerraformInfra_template/azure-pipelines.yml)
-- 🧩 **Step Template:** [`pipelines/templates/terraform-steps.yml`](file:///d:/TerraformInfra_template/pipelines/templates/terraform-steps.yml)
+- 🧩 **Step Template:** [`pipelines/templates/terraform-steps.yml`](file:///d:/TerraformInfra_template/pipelines/templates/terraform-steps.yml) (PowerShell tasks for Windows)
 - ⚙️ **Variable Templates:**
   - [`pipelines/variables/common-vars.yml`](file:///d:/TerraformInfra_template/pipelines/variables/common-vars.yml)
   - [`pipelines/variables/dev-vars.yml`](file:///d:/TerraformInfra_template/pipelines/variables/dev-vars.yml)
@@ -32,9 +33,9 @@ Pipeline fully modular bana di gayi hai: **Step Templates**, **Variable Template
 │   └── variables.tf
 ├── pipelines/
 │   ├── templates/
-│   │   └── terraform-steps.yml   # 🧩 Reusable Steps (Init, Validate, Plan, Apply)
+│   │   └── terraform-steps.yml   # 🧩 Reusable Steps (PowerShell commands for Windows)
 │   └── variables/
-│       ├── common-vars.yml       # ⚙️ Shared Pipeline Variables (Service connection, TF version)
+│       ├── common-vars.yml       # ⚙️ Shared Variables (Agent Pool, SC, TF version)
 │       ├── dev-vars.yml          # ⚙️ Dev Environment Variables
 │       └── prod-vars.yml         # ⚙️ Prod Environment Variables
 ├── azure-pipelines.yml           # 🚀 Multi-Stage Pipeline (Plan -> Dev Apply -> Prod Apply)
@@ -49,7 +50,7 @@ Pipeline fully modular bana di gayi hai: **Step Templates**, **Variable Template
 ### 🔄 Pipeline Workflow
 
 1. **Stage 1: Validate & Plan (Dev & Prod)**  
-   - `Dev` aur `Prod` dono ke liye `terraform init`, `validate`, aur `plan` chalta hai.
+   - Windows Agent par `terraform init`, `validate`, aur `plan` execute hota hai PowerShell ke through.
    - Har Pull Request (PR) aur Commit par run hota hai.
 
 2. **Stage 2: Deploy Dev**  
@@ -57,14 +58,16 @@ Pipeline fully modular bana di gayi hai: **Step Templates**, **Variable Template
 
 3. **Stage 3: Deploy Prod**  
    - `Dev` deploy successfully complete hone ke baad `Prod` environment me `terraform apply` hota hai.
-   - *(Optional: Azure DevOps me **Pipelines -> Environments -> Prod** par jakar Approval gate laga sakte hain taaki Prod deploy hone se pehle aapki manual approval maange).*
+   - *(Optional: Azure DevOps me **Pipelines -> Environments -> Prod** par jakar Approval gate laga sakte hain).*
 
 ---
 
-### ⚙️ Kaise Run Karein (Azure DevOps me):
+### ⚙️ Self-Hosted Windows Agent Notes:
 
-1. Apne Azure DevOps project me **Pipelines** -> **New Pipeline** par jayein.
-2. **Azure Repos Git** (ya GitHub) select karein.
-3. Apna repository choose karein.
-4. **Existing Azure Pipelines YAML file** choose karein aur path me `/azure-pipelines.yml` select karein.
-5. **Run** par click karein! 🎉
+1. **Agent Pool Name Check Karein:**  
+   Agar aapke self-hosted Windows agent ka pool `Default` ke alawa kuch aur hai, toh [`pipelines/variables/common-vars.yml`](file:///d:/TerraformInfra_template/pipelines/variables/common-vars.yml) me `agentPoolName` ko update kar lein:
+   ```yaml
+   agentPoolName: 'Default' # <-- Apne pool ka exact name dalein
+   ```
+2. **Azure CLI & Terraform:**  
+   Aapke Windows agent system par **Azure CLI (`az`)** install aur configured honi chahiye.

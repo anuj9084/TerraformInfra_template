@@ -1,19 +1,5 @@
-# ==============================================================================
-# Common Variables for Azure DevOps Pipeline
-# Yeh variables saare stages aur environments me share hote hain
-# ==============================================================================
-
 variables:
-  # Azure DevOps Service Connection Name
-  azureServiceConnection: 'anuj-pipeline-sc'
 
-  # Terraform Working Directory (Root directory jahan main.tf aur provider.tf hain)
-  terraformWorkingDir: '$(System.DefaultWorkingDirectory)'
-
-  # Terraform CLI Version jo install hogi
-  tfVersion: '1.9.5'
-
-  # Backend Storage Account Variables (Future use ke liye)
-  # backendResourceGroup: 'rg-terraform-state'
-  # backendStorageAccount: 'sttfstateprod01'
-  # backendContainer: 'tfstate'
+azureServiceConnection: 'anuj-pipeline-sc'
+terraformWorkingDir: '$(System.DefaultWorkingDirectory)'
+tfVersion: '1.9.5'
