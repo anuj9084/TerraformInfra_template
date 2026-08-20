@@ -1,5 +1,4 @@
 variables:
-
-azureServiceConnection: 'anuj-pipeline-sc'
-terraformWorkingDir: '$(System.DefaultWorkingDirectory)'
-tfVersion: '1.9.5'
+  azureServiceConnection: 'anuj-pipeline-sc'
+  terraformWorkingDir: '$(System.DefaultWorkingDirectory)'
+  tfVersion: '1.9.5'
