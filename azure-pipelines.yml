@@ -14,7 +14,10 @@ pr:
 # Build Agent Pool (Microsoft-hosted Ubuntu VM)
 pool:
   name: 'AgentUserDefinedPool'
+<<<<<<< HEAD
 
+=======
+>>>>>>> 65eeb1f1bf7e0df3bfa625561be71edb2d844195
 
 variables:
   - template: pipelines/variables/common-vars.yml
